@@ -1,3 +1,8 @@
+#![feature(phase)]
+#[phase(plugin)]
+extern crate regex_macros;
+extern crate regex;
+
 use std::os; // for os::args
 use std::io::File;
 
@@ -18,9 +23,25 @@ fn main() {
 
     match file.read_to_string() {
         Err(error) => panic!("failed to read {}: {}", display, error.desc),
-        Ok(string) => print!("{}", string),
+        Ok(string) => process(string),
     };
 
     // the file is closed and `file` is taken out of scope
+}
+
+fn process(string: String) {
+
+    // an assignment can be defined as:
+    // 'let' ANY_VALID_IDENTIFIER '=' ANY_MATH_EXPRESSION
+    //  - where a valid identifier only includes a-z and A-Z
+    //  - and where (currently, will be fixed), a valid math
+    //    expression contains two operands and 1 operator (unary operators not included)
+    let assignment = regex!( r"^\s*let\s+[a-zA-Z]+\s+=\s+\d+(?:\s+[\+\*-/]\s+\d+)*$" );
+
+    for line in string.as_slice().split('\n') {
+        if assignment.is_match(line) {
+            println!("got assignment '{}'", line);
+        }
+    }
 }
 
