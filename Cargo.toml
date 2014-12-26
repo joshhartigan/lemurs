@@ -1,0 +1,5 @@
+[package]
+
+name = "lemurs"
+version = "0.0.1"
+authors = ["joshhartigan <joshhartigan99@gmail.com>"]
